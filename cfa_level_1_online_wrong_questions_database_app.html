@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFA Level 1 极速智能在线错题数据库</title>
+    <style>
+        :root {
+            --primary: #1b365d;
+            --primary-light: #e8eef5;
+            --accent: #d97706;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            background: var(--primary);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        header .subtitle {
+            font-size: 0.875rem;
+            opacity: 0.85;
+        }
+
+        /* Stats Bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Card Section */
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Input mode tabs */
+        .tab-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .tab-btn {
+            padding: 6px 16px;
+            border-radius: 6px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .paste-box {
+            width: 100%;
+            height: 160px;
+            padding: 12px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            outline: none;
+            background: #fafafa;
+            transition: border-color 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .paste-box:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+        }
+
+        .paste-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            background: var(--primary-light);
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input, select, textarea {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        /* Filter Section */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        /* Table Area */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+            padding: 12px;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Status & Tag Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .badge-status-new { background: #e0f2fe; color: #0369a1; }
+        .badge-status-review { background: #fef3c7; color: #b45309; }
+        .badge-status-mastered { background: #d1fae5; color: #047857; }
+
+        .badge-error { background: #fee2e2; color: #b91c1c; }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-right: 8px;
+        }
+
+        .action-btn.delete { color: var(--danger); }
+
+        .code-block {
+            background: #f1f5f9;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>CFA Level 1 在线智能错题数据库</h1>
+            <div class="subtitle">支持 Plaintext 纯文本一键解析、云端静态部署与浏览器持久化</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline" style="color:white; border-color:white;" onclick="exportData()">导出 JSON 备份</button>
+            <button class="btn btn-danger" style="color:#fca5a5; border-color:#fca5a5;" onclick="resetToInitialSeed()">重置默认 7 题</button>
+        </div>
+    </header>
+
+    <!-- Stat Dashboard -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="number" id="stat-total">0</div>
+            <div class="label">错题总数</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" id="stat-review" style="color: var(--warning);">0</div>
+            <div class="label">待复盘/需强化</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" id="stat-mastered" style="color: var(--success);">0</div>
+            <div class="label">完全掌握</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" id="stat-rate">0%</div>
+            <div class="label">总体掌握率</div>
+        </div>
+    </div>
+
+    <!-- Add Question Form / Quick Paste Section -->
+    <div class="card">
+        <div class="card-title">
+            <span>⚡ 极速录入错题</span>
+        </div>
+
+        <div class="tab-group">
+            <button class="tab-btn active" id="btn-tab-fast" onclick="switchInputMode('fast')">📋 纯文本一键粘贴解析 (Plaintext)</button>
+            <button class="tab-btn" id="btn-tab-form" onclick="switchInputMode('form')">📝 传统表单逐项录入</button>
+        </div>
+
+        <!-- Mode 1: Plaintext One-Click Quick Paste -->
+        <div id="quick-paste-section">
+            <div class="paste-hint">
+                💡 <strong>使用说明：</strong> 直接复制 AI 助手生成的 Plaintext 错题卡块粘贴在下方文本框中，点击 <strong>“解析并存入错题库”</strong> 即可自动提取 ID、科目、考点、错因与逻辑卡片！
+            </div>
+            <textarea id="raw-paste-input" class="paste-box" placeholder="📌【CFA 错题卡】&#10;• ID: ECO-004&#10;• 科目: Economics&#10;• 考点: 交叉价格弹性与替代品/互补品判定&#10;• 错因: 审题陷阱&#10;• 错因剖析: 混淆了交叉弹性正负号对应的是替代品还是互补品&#10;• 核心逻辑: Exy > 0 为替代品 (Substitutes)；Exy < 0 为互补品 (Complements)。"></textarea>
+            <button class="btn" onclick="parseAndSaveQuickText()">🚀 一键解析并存入数据库</button>
+        </div>
+
+        <!-- Mode 2: Traditional Detailed Form -->
+        <div id="detailed-form-section" style="display: none;">
+            <form id="add-form" onsubmit="addQuestionManual(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>题目 ID</label>
+                        <input type="text" id="q-id" placeholder="例: ECO-004">
+                    </div>
+                    <div class="form-group">
+                        <label>CFA 科目</label>
+                        <select id="q-subject">
+                            <option value="Economics">Economics 经济学</option>
+                            <option value="Financial Reporting & Analysis">FRA 财务报表分析</option>
+                            <option value="Fixed Income">Fixed Income 固定收益</option>
+                            <option value="Quantitative Methods">Quant 数量分析</option>
+                            <option value="Corporate Issuers">Corporate 公司金融</option>
+                            <option value="Equity Investments">Equity 权益投资</option>
+                            <option value="Derivatives">Derivatives 衍生品</option>
+                            <option value="Alternative Investments">Alternative 另类投资</option>
+                            <option value="Portfolio Management">Portfolio 组合管理</option>
+                            <option value="Ethical & Professional Standards">Ethics 职业道德</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>核心考点/知识点</label>
+                        <input type="text" id="q-topic" placeholder="例: 交叉价格弹性判定">
+                    </div>
+                    <div class="form-group">
+                        <label>错误类型</label>
+                        <select id="q-error-type">
+                            <option value="概念辨析">概念辨析</option>
+                            <option value="概念混淆">概念混淆</option>
+                            <option value="计算器失误">计算器失误</option>
+                            <option value="审题陷阱">审题陷阱</option>
+                            <option value="公式/法则记错">公式/法则记错</option>
+                            <option value="概念推导">概念推导</option>
+                            <option value="粗心大意">粗心大意</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>题目来源</label>
+                        <input type="text" id="q-source" placeholder="例: 官网 Topic Test / 原版书 EOC">
+                    </div>
+                    <div class="form-group">
+                        <label>掌握状态</label>
+                        <select id="q-status">
+                            <option value="Needs Review">Needs Review (需复盘)</option>
+                            <option value="New">New (新错题)</option>
+                            <option value="Mastered">Mastered (完全掌握)</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>错误原因剖析 (错因诊断)</label>
+                        <textarea id="q-analysis" placeholder="记录当时为什么做错..."></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>核心逻辑与考点解题推导 (考点总结)</label>
+                        <textarea id="q-logic" placeholder="用简明的一两句话总结解题逻辑/核心公式..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn">手动保存录入</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Database View -->
+    <div class="card">
+        <div class="card-title">📚 错题明细数据库</div>
+        
+        <!-- Filter Tools -->
+        <div class="filter-bar">
+            <select id="filter-subject" onchange="renderTable()">
+                <option value="">所有科目</option>
+                <option value="Economics">Economics 经济学</option>
+                <option value="Financial Reporting & Analysis">FRA 财务报表分析</option>
+                <option value="Fixed Income">Fixed Income 固定收益</option>
+                <option value="Quantitative Methods">Quant 数量分析</option>
+                <option value="Corporate Issuers">Corporate 公司金融</option>
+                <option value="Equity Investments">Equity 权益投资</option>
+                <option value="Derivatives">Derivatives 衍生品</option>
+                <option value="Alternative Investments">Alternative 另类投资</option>
+                <option value="Portfolio Management">Portfolio 组合管理</option>
+                <option value="Ethical & Professional Standards">Ethics 职业道德</option>
+            </select>
+
+            <select id="filter-status" onchange="renderTable()">
+                <option value="">所有状态</option>
+                <option value="Needs Review">Needs Review (需复盘)</option>
+                <option value="New">New (新错题)</option>
+                <option value="Mastered">Mastered (完全掌握)</option>
+            </select>
+
+            <input type="text" id="filter-search" placeholder="搜索考点/错因关键词..." oninput="renderTable()">
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>科目 / 考点</th>
+                        <th>错误归因</th>
+                        <th>错因诊断</th>
+                        <th>解题逻辑 / 考点总结</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="questions-tbody">
+                    <!-- JS Rows Insertion -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initial Seed Data with All 7 CFA Level 1 Questions
+    const initialData = [
+        {
+            "id": "FRA-001",
+            "subject": "Financial Reporting & Analysis",
+            "topic": "US GAAP vs IFRS 开发阶段资本化差异",
+            "errorType": "概念混淆",
+            "source": "官网 Topic Test Q12",
+            "status": "Needs Review",
+            "analysis": "混淆了 IFRS 下开发阶段资本化的 6 项条件，误以为与 US GAAP 一样全部费用化。",
+            "logic": "US GAAP：研发支出全部费用化（软件除外）。\nIFRS：研究阶段费用化；开发阶段符合 6 项条件必须资本化。",
+            "createdDate": "2026-08-28"
+        },
+        {
+            "id": "FI-001",
+            "subject": "Fixed Income",
+            "topic": "Effective Duration 与含权债估值",
+            "errorType": "审题陷阱",
+            "source": "Mock 1 Afternoon Q18",
+            "status": "Needs Review",
+            "analysis": "忽略了题目中 Callable Bond 的条件，错误使用了 ModDur 计算公式。",
+            "logic": "含权债券（Callable/Putable）现金流不确定，不能用 Macaulay/Modified Duration，必须使用 Effective Duration。",
+            "createdDate": "2026-08-29"
+        },
+        {
+            "id": "CORP-001",
+            "subject": "Corporate Issuers",
+            "topic": "WACC 计算与税后债务成本",
+            "errorType": "计算器失误",
+            "source": "原版书 EOC Q5",
+            "status": "Mastered",
+            "analysis": "在计算 WACC 时忘记将 Rd 乘以 (1 - t)，直接使用了税前债务成本。",
+            "logic": "WACC = (Wd * Rd * (1-t)) + (Wps * Rps) + (We * Re)。利息具有抵税效应，必须用税后债务成本！",
+            "createdDate": "2026-08-25"
+        },
+        {
+            "id": "QUANT-001",
+            "subject": "Quantitative Methods",
+            "topic": "假设检验 p-value 决策规则",
+            "errorType": "公式/法则记错",
+            "source": "原版书 EOC Q22",
+            "status": "Needs Review",
+            "analysis": "误将 p-value 小于 alpha 记为接受原假设。",
+            "logic": "口诀：p 值小，拒绝原假设 (p <= alpha -> Reject H0)。",
+            "createdDate": "2026-08-30"
+        },
+        {
+            "id": "ECO-001",
+            "subject": "Economics",
+            "topic": "吉芬商品 (Giffen Good) 与效应分解",
+            "errorType": "概念推导",
+            "source": "原版书 EOC Q15",
+            "status": "Needs Review",
+            "analysis": "混淆了替代效应与收入效应的方向及相对大小。",
+            "logic": "吉芬商品为强劣等品 (YED < 0)，收入效应（拉动需求增加）> 替代效应（拉动需求减少），导致价格上涨需求反而增加。",
+            "createdDate": "2026-08-31"
+        },
+        {
+            "id": "ECO-002",
+            "subject": "Economics",
+            "topic": "需求曲线沿线移动 (Movement) vs 整体平移 (Shift)",
+            "errorType": "概念辨析",
+            "source": "官网 Topic Test Q8",
+            "status": "Needs Review",
+            "analysis": "误认为收入改变会导致沿着需求曲线移动。",
+            "logic": "沿线移动 (Movement)：仅由商品自身价格改变导致 (ΔQd)；整体平移 (Shift)：由收入、替代品/互补品价格等非价格因素改变导致 (ΔD)。",
+            "createdDate": "2026-09-01"
+        },
+        {
+            "id": "ECO-003",
+            "subject": "Economics",
+            "topic": "需求价格弹性 (|Ed| = 1) 与总收益 (Total Revenue) 关系",
+            "errorType": "概念辨析",
+            "source": "原版书 EOC Q18",
+            "status": "Needs Review",
+            "analysis": "未掌握需求价格弹性系数等于 -1 时（|Ed| = 1），价格变动对总收益 (TR) 的联动影响。",
+            "logic": "1. |Ed| = 1 为单位弹性 (Unitary Elastic)，价格变动时总收益 TR 保持不变 (达到最大值，MR = 0)。\n2. |Ed| > 1 (富有弹性)：降价增加总收益。\n3. |Ed| < 1 (缺乏弹性)：提价增加总收益。",
+            "createdDate": "2026-09-02"
+        }
+    ];
+
+    // Storage Key Versioning
+    const STORAGE_KEY = 'cfa_wrong_questions_v2';
+
+    // Load from LocalStorage or seed
+    let questions = JSON.parse(localStorage.getItem(STORAGE_KEY)) || initialData;
+
+    function saveToStorage() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(questions));
+        updateStats();
+    }
+
+    function resetToInitialSeed() {
+        if (confirm('是否确定重置并还原为默认的 7 道 CFA 核心错题数据？')) {
+            questions = [...initialData];
+            saveToStorage();
+            renderTable();
+        }
+    }
+
+    function switchInputMode(mode) {
+        if (mode === 'fast') {
+            document.getElementById('quick-paste-section').style.display = 'block';
+            document.getElementById('detailed-form-section').style.display = 'none';
+            document.getElementById('btn-tab-fast').classList.add('active');
+            document.getElementById('btn-tab-form').classList.remove('active');
+        } else {
+            document.getElementById('quick-paste-section').style.display = 'none';
+            document.getElementById('detailed-form-section').style.display = 'block';
+            document.getElementById('btn-tab-fast').classList.remove('active');
+            document.getElementById('btn-tab-form').classList.add('active');
+        }
+    }
+
+    function parseAndSaveQuickText() {
+        const rawText = document.getElementById('raw-paste-input').value.trim();
+        if (!rawText) {
+            alert('请粘贴 Plaintext 文本后再点击解析！');
+            return;
+        }
+
+        const getField = (pattern) => {
+            const match = rawText.match(pattern);
+            return match ? match[1].trim() : '';
+        };
+
+        const id = getField(/•\s*(?:ID|题号)[:：]\s*(.+)/i) || `Q-${Date.now().toString().slice(-4)}`;
+        const subject = getField(/•\s*(?:科目|Subject)[:：]\s*(.+)/i) || 'Economics';
+        const topic = getField(/•\s*(?:考点|知识点)[:：]\s*(.+)/i) || '综合考点复盘';
+        const errorType = getField(/•\s*(?:错因类型|归因|错因)[:：]\s*(.+)/i) || '概念辨析';
+        const source = getField(/•\s*(?:来源|出处)[:：]\s*(.+)/i) || '日常练习';
+        const analysis = getField(/•\s*(?:错因剖析|诊断|错因分析)[:：]\s*(.+)/i) || '尚无明确错因记录';
+        const logic = getField(/•\s*(?:核心逻辑|考点总结|逻辑解题)[:：]\s*(.+)/i) || rawText;
+
+        const newQ = {
+            id: id,
+            subject: subject,
+            topic: topic,
+            errorType: errorType,
+            source: source,
+            status: 'Needs Review',
+            analysis: analysis,
+            logic: logic,
+            createdDate: new Date().toISOString().split('T')[0]
+        };
+
+        questions.unshift(newQ);
+        saveToStorage();
+        renderTable();
+
+        document.getElementById('raw-paste-input').value = '';
+        alert(`✅ 错题 [${id}] 解析保存成功！已加入在线复盘数据库。`);
+    }
+
+    function updateStats() {
+        const total = questions.length;
+        const review = questions.filter(q => q.status === 'Needs Review' || q.status === 'New').length;
+        const mastered = questions.filter(q => q.status === 'Mastered').length;
+        const rate = total > 0 ? Math.round((mastered / total) * 100) : 0;
+
+        document.getElementById('stat-total').innerText = total;
+        document.getElementById('stat-review').innerText = review;
+        document.getElementById('stat-mastered').innerText = mastered;
+        document.getElementById('stat-rate').innerText = rate + '%';
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('questions-tbody');
+        tbody.innerHTML = '';
+
+        const subjFilter = document.getElementById('filter-subject').value;
+        const statusFilter = document.getElementById('filter-status').value;
+        const searchFilter = document.getElementById('filter-search').value.toLowerCase();
+
+        const filtered = questions.filter(q => {
+            const matchSubj = !subjFilter || q.subject === subjFilter;
+            const matchStatus = !statusFilter || q.status === statusFilter;
+            const matchSearch = !searchFilter || 
+                q.topic.toLowerCase().includes(searchFilter) || 
+                q.analysis.toLowerCase().includes(searchFilter) ||
+                q.logic.toLowerCase().includes(searchFilter) ||
+                q.id.toLowerCase().includes(searchFilter);
+
+            return matchSubj && matchStatus && matchSearch;
+        });
+
+        filtered.forEach((q) => {
+            const tr = document.createElement('tr');
+
+            let statusBadge = '';
+            if (q.status === 'New') statusBadge = '<span class="badge badge-status-new">New</span>';
+            else if (q.status === 'Needs Review') statusBadge = '<span class="badge badge-status-review">Needs Review</span>';
+            else statusBadge = '<span class="badge badge-status-mastered">Mastered</span>';
+
+            tr.innerHTML = `
+                <td><strong>${q.id}</strong></td>
+                <td>
+                    <div style="font-weight: 600; color: var(--primary);">${q.subject}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">${q.topic}</div>
+                    ${q.source ? `<div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">来源: ${q.source}</div>` : ''}
+                </td>
+                <td><span class="badge badge-error">${q.errorType}</span></td>
+                <td>${q.analysis}</td>
+                <td><div class="code-block">${q.logic}</div></td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="action-btn" onclick="toggleStatus('${q.id}')">切换状态</button>
+                    <button class="action-btn delete" onclick="deleteQuestion('${q.id}')">删除</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        updateStats();
+    }
+
+    function addQuestionManual(e) {
+        e.preventDefault();
+        const newQ = {
+            id: document.getElementById('q-id').value || `Q-${Date.now().toString().slice(-4)}`,
+            subject: document.getElementById('q-subject').value,
+            topic: document.getElementById('q-topic').value,
+            errorType: document.getElementById('q-error-type').value,
+            source: document.getElementById('q-source').value,
+            status: document.getElementById('q-status').value,
+            analysis: document.getElementById('q-analysis').value,
+            logic: document.getElementById('q-logic').value,
+            createdDate: new Date().toISOString().split('T')[0]
+        };
+
+        questions.unshift(newQ);
+        saveToStorage();
+        renderTable();
+
+        document.getElementById('add-form').reset();
+    }
+
+    function toggleStatus(id) {
+        const q = questions.find(item => item.id === id);
+        if (q) {
+            if (q.status === 'Needs Review' || q.status === 'New') {
+                q.status = 'Mastered';
+            } else {
+                q.status = 'Needs Review';
+            }
+            saveToStorage();
+            renderTable();
+        }
+    }
+
+    function deleteQuestion(id) {
+        if (confirm(`确定要删除错题 ${id} 吗？`)) {
+            questions = questions.filter(item => item.id !== id);
+            saveToStorage();
+            renderTable();
+        }
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questions, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `CFA_Wrong_Questions_Backup_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    // Initial Render
+    renderTable();
+</script>
+
+</body>
+</html>
